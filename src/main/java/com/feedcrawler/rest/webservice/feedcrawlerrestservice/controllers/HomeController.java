@@ -35,7 +35,7 @@ public class HomeController {
 		return 99;
 	}
 	
-	// returning bean
+	// returning bean (object)
 	// URI /bean
 	@GetMapping(path="/bean")
 	public HomeBean homeBean() {
