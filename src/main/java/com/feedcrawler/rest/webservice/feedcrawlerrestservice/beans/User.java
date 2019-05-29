@@ -2,6 +2,9 @@ package com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
@@ -9,8 +12,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description="USER Description")
+@Entity
 public class User {
 
+	@Id
+	@GeneratedValue
 	private Integer id;
 	
 	@Size(min=2, message="Name should be atleast 2 char long!")
@@ -20,6 +26,10 @@ public class User {
 	@Past
 	@ApiModelProperty(notes="Birth date should be from the past date")
 	private Date birthDate;
+	
+	public User(){
+		
+	}
 	
 	public User(Integer id, String name, Date birthDate) {
 		super();
