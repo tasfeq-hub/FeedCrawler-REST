@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans.FeedTitle;
+import com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans.FeedV1;
+import com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans.FeedV2;
 import com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans.HomeBean;
 
 @RestController
@@ -49,6 +52,49 @@ public class HomeController {
 		return new HomeBean(String.format("Hello Mrs, %s", name));
 	}
 	
-		
-		
+	/**** Versioning with URI ****/
+	
+	@GetMapping(path="/v1/feedtitle")
+	public FeedV1 getTitleV1() {
+		return new FeedV1("This is title Body and SubBody");
+	}
+	
+	@GetMapping(path="/v2/feedtitle")
+	public FeedV2 getTitleV2() {
+		return new FeedV2(new FeedTitle("This is title Body"," and SubBody"));
+	}
+	
+	
+	/**** Versioning with Parameters ****/
+	
+	@GetMapping(value="/feedtitle/param",params="v=1")
+	public FeedV1 getParamTitleV1() {
+		return new FeedV1("This is title Body and SubBody");
+	}
+	
+	@GetMapping(value="/feedtitle/param",params="v=2")
+	public FeedV2 getParamTitleV2() {
+		return new FeedV2(new FeedTitle("This is title Body"," and SubBody"));
+	}
+	
+	
+	/**** Versioning with Header ****/
+	
+	@GetMapping(value="/feedtitle/header",headers="API-VERSION=1")
+	public FeedV1 getHeaderTitleV1() {
+		return new FeedV1("This is title Body and SubBody");
+	}
+	
+	@GetMapping(value="/feedtitle/header",headers="API-VERSION=2")
+	public FeedV2 getHeaderTitleV2() {
+		return new FeedV2(new FeedTitle("This is title Body"," and SubBody"));
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
