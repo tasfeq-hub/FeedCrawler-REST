@@ -91,10 +91,18 @@ public class HomeController {
 	}
 	
 	
+/**** Versioning with Producers ****/
 	
+	@GetMapping(value="/feedtitle/produce",produces="application/feedcrawler.com-v1+json")
+	public FeedV1 getProducesTitleV1() {
+		return new FeedV1("This is title Body and SubBody");
+	}
 	
+	@GetMapping(value="/feedtitle/produce",produces="application/feedcrawler.com-v2+json")
+	public FeedV2 getProducesTitleV2() {
+		return new FeedV2(new FeedTitle("This is title Body"," and SubBody"));
+	}
 	
-	
-	
+
 	
 }
