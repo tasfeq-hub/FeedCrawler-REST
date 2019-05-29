@@ -15,19 +15,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans.Post;
 import com.feedcrawler.rest.webservice.feedcrawlerrestservice.beans.User;
-import com.feedcrawler.rest.webservice.feedcrawlerrestservice.daoservices.UserDaoService;
 import com.feedcrawler.rest.webservice.feedcrawlerrestservice.handlers.UserNotFoundException;
+import com.feedcrawler.rest.webservice.feedcrawlerrestservice.repositories.PostRepository;
 import com.feedcrawler.rest.webservice.feedcrawlerrestservice.repositories.UserRepository;
 
 @RestController
 public class UserJPAController {
 
 	@Autowired
-	private UserDaoService service;
+	private UserRepository userRepository;
 	
 	@Autowired
-	private UserRepository userRepository;
+	private PostRepository postRepository;
 	
 	@GetMapping("/jpa/users")
 	public List<User> retrieveAllUsers(){
@@ -45,7 +46,7 @@ public class UserJPAController {
 	
 	@PostMapping("/jpa/users")
 	public ResponseEntity<Object> saveUser(@Valid @RequestBody User user) {
-		User savedUser = service.save(user);
+		User savedUser = userRepository.save(user);
 		URI location = ServletUriComponentsBuilder
 			.fromCurrentRequest()
 			.path("/{id}")
@@ -58,8 +59,37 @@ public class UserJPAController {
 	
 	@DeleteMapping("/jpa/users/{id}")
 	public void deleteUser(@PathVariable int id) {
-		User user = service.deleteById(id);
-		if(user==null)
+		userRepository.deleteById(id);
+	}
+	
+	@GetMapping("/jpa/users/{id}/posts")
+	public List<Post> retrieveAllPosts(@PathVariable int id){
+		Optional<User> userOptional = userRepository.findById(id);
+		if(!userOptional.isPresent()) {
 			throw new UserNotFoundException("id-"+id);
+		}
+		
+		return userOptional.get().getPosts();
+	}
+	
+	@PostMapping("/jpa/users/{id}/posts")
+	public ResponseEntity<Object> saveUser(@PathVariable int id, @RequestBody Post post) {
+		Optional<User> userOptional = userRepository.findById(id);
+		
+		if(!userOptional.isPresent()) {
+			throw new UserNotFoundException("id-"+id);
+		}
+		
+		User user = userOptional.get();
+		post.setUser(user);
+		postRepository.save(post);
+		URI location = ServletUriComponentsBuilder
+			.fromCurrentRequest()
+			.path("/{id}")
+			.buildAndExpand(post.getId())
+			.toUri();
+		
+		return ResponseEntity.created(location).build();
+		
 	}
 }
